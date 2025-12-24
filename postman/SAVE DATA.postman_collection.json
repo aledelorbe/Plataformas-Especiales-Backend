@@ -1,0 +1,100 @@
+{
+	"info": {
+		"_postman_id": "42c33de6-dcf0-42ce-95ad-fcffe5848513",
+		"name": "SAVE DATA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "46944597",
+		"_collection_link": "https://telecoms-administrator-82446008-2957368.postman.co/workspace/MARTIN-ALEJANDRO-GRANADOS-BELLO~137692b1-9ef0-4fcb-840f-2d010a35161a/collection/46944597-42c33de6-dcf0-42ce-95ad-fcffe5848513?action=share&source=collection_link&creator=46944597"
+	},
+	"item": [
+		{
+			"name": "transactions",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SD_LOCAL_DOCKER}}/api/transactions/get-all-transactions",
+					"host": [
+						"{{SD_LOCAL_DOCKER}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"get-all-transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transaction by reference",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SD_LOCAL_DOCKER}}/api/transactions/by-reference/335394",
+					"host": [
+						"{{SD_LOCAL_DOCKER}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"by-reference",
+						"335394"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cancel transaction",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{SD_LOCAL_DOCKER}}/api/transactions/cancel-Transaction/1/335394/cancell",
+					"host": [
+						"{{SD_LOCAL_DOCKER}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"cancel-Transaction",
+						"1",
+						"335394",
+						"cancell"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transaction",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"operation\": \"transfer\",\r\n  \"amount\": 999.90,\r\n  \"client\": \"patito pablo\",\r\n  \"secret\": \"word word word\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{SD_LOCAL_DOCKER}}/api/transactions/save",
+					"host": [
+						"{{SD_LOCAL_DOCKER}}"
+					],
+					"path": [
+						"api",
+						"transactions",
+						"save"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
