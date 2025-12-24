@@ -1,0 +1,160 @@
+
+openapi: 3.0.3
+
+info:
+  title: Transaction API (Processing data)
+  version: v1.0.0
+  description: API for managing transactions.
+  contact:
+    name: Alejandro Granados
+    email: alejandro.magb@gmail.com
+    url: https://github.com/aledelorbe
+
+tags:
+  - name: "Transactions"
+    description: Endpoints related to transaction data management.
+
+paths:
+  /api/transactions:
+    get:
+      summary: Get all transactions
+      tags:
+        - Transactions
+      description: Returns a list of all transactions.
+      responses:
+        '200':
+          description: List of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TransactionResponseDto'
+
+    post:
+      summary: Create a new transaction
+      tags:
+        - Transactions
+      description: Saves a new transaction and returns the created object.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionRequestDto'
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponseDto'
+        '400':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionValidationErrors'
+
+  /api/transactions/by-reference/{reference}:
+    get:
+      summary: Find a transaction by reference
+      tags:
+        - Transactions
+      parameters:
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponseDto'
+        '404':
+          description: Transaction not found
+
+  /api/transactions/cancel-Transaction/{id}/{reference}/{status}:
+    patch:
+      summary: Cancel or update the status of a transaction
+      tags:
+        - Transactions
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: reference
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: Transaction updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionResponseDto'
+        '404':
+          description: Transaction not found
+
+components:
+  schemas:
+
+    ValidationErrorsBase:
+      type: object
+      description: Base validation error schema.
+      additionalProperties:
+        type: string
+
+    TransactionRequestDto:
+      type: object
+      properties:
+        operation:
+          type: string
+        amount:
+          type: number
+        client:
+          type: string
+        secret:
+          type: string
+      required:
+        - operation
+        - amount
+        - client
+        - secret
+
+    TransactionResponseDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        status:
+          type: number
+          example: approved
+        reference:
+          type: string
+          example: uuid123
+        operation:
+          type: string
+          example: payment
+
+    TransactionValidationErrors:
+      allOf:
+        - $ref: "#/components/schemas/ValidationErrorsBase"
+      example:
+        operation: "Must contain only non-numeric characters."
+        client: "Must contain only non-numeric characters."
+        amount: "Must contain only digits and optionally only one decimal point."
+        secret: "Must not be blank."
