@@ -1,5 +1,7 @@
 package com.alejandro.save.data.msvc_save_data.entities;
 
+import com.alejandro.save.data.msvc_save_data.dtos.TransactionRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,12 +9,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-// To specific the name of the table in mysql
-// In mysql the name of this table is 'transaction' but in this project 
+// In mysql the name of this table is 'transaction' but in this project
 // the name of this class is 'Transaction'
 @Entity
 @Table(name = "transaction") 
-public class Transaction2 {
+public class TransactionEntity {
     
     // Mapping of class attributes with table fields in mysql
     @Id
@@ -32,7 +33,19 @@ public class Transaction2 {
 
     private String status;
 
-    public Transaction2() {
+    public TransactionEntity() {
+    }
+
+    // Factory method
+    public static TransactionEntity createApproved(TransactionRequest request, String reference) {
+        TransactionEntity entity = new TransactionEntity();
+        entity.setOperation(request.getOperation());
+        entity.setAmount(request.getAmount());
+        entity.setClient(request.getClient());
+        entity.setSecret(request.getSecret());
+        entity.setStatus("Approved");
+        entity.setReference(reference);
+        return entity;
     }
 
     public Long getId() {

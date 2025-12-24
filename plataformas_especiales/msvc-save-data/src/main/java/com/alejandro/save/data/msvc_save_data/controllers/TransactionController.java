@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alejandro.save.data.msvc_save_data.dto.TransactionResponseDto;
-import com.alejandro.save.data.msvc_save_data.entities.Transaction2;
+import com.alejandro.save.data.msvc_save_data.dtos.TransactionRequest;
+import com.alejandro.save.data.msvc_save_data.entities.TransactionEntity;
 import com.alejandro.save.data.msvc_save_data.services.TransactionService;
 
 
-@RestController // To create a api rest.
+@RestController // To create an api rest.
 @RequestMapping("/api/transactions") // To create a base path.
 public class TransactionController {
 
@@ -34,15 +34,15 @@ public class TransactionController {
 
     // To create an endpoint that allows invoking the method findAll.
     @GetMapping("/get-all-transactions")
-    public List<Transaction2> transactions() {
+    public List<TransactionEntity> transactions() {
         return service.findAll();
     }
 
-    // To create an endpoint that allows invoking the method fingByReference.
+    // To create an endpoint that allows invoking the method findByReference.
     @GetMapping("/by-reference/{reference}")
     public ResponseEntity<?> transactionByReference(@PathVariable String reference) {
         // Search for a specific transaction
-        Optional<Transaction2> optionalTransaction = service.findByReference(reference);
+        Optional<TransactionEntity> optionalTransaction = service.findByReference(reference);
 
         if (optionalTransaction.isPresent()) {
             return ResponseEntity.ok(optionalTransaction.orElseThrow());
@@ -57,7 +57,7 @@ public class TransactionController {
     public ResponseEntity<?> cancelTransaction(@PathVariable Long id, @PathVariable String reference, @PathVariable String status) {
 
         // Find specific client and if it's present then return specific client
-        Optional<Transaction2> optionalTransaction = service.cancelTransaction(id, reference, status);
+        Optional<TransactionEntity> optionalTransaction = service.cancelTransaction(id, reference, status);
 
         if (optionalTransaction.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(optionalTransaction.orElseThrow());
@@ -70,10 +70,10 @@ public class TransactionController {
     // To create an endpoint that allows invoking the method save.
     // The annotation called 'RequestBody' allows receiving data of a transaction
     @PostMapping("/save")
-    public ResponseEntity<?> saveTransaction(@RequestBody Transaction2 transaction) {
+    public ResponseEntity<?> saveTransaction(@RequestBody TransactionRequest transaction) {
 
         // When a new transaction is created to respond return the same transaction
-        TransactionResponseDto response = service.save(transaction);
+        TransactionEntity response = service.save(transaction);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

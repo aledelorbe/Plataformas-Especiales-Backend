@@ -7,8 +7,8 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alejandro.save.data.msvc_save_data.dto.TransactionResponseDto;
-import com.alejandro.save.data.msvc_save_data.entities.Transaction2;
+import com.alejandro.save.data.msvc_save_data.dtos.TransactionRequest;
+import com.alejandro.save.data.msvc_save_data.entities.TransactionEntity;
 import com.alejandro.save.data.msvc_save_data.repositories.TransactionRepository;
 
 import jakarta.persistence.EntityManager;
@@ -29,35 +29,35 @@ public class TransactionServiceImp implements TransactionService {
     // Methods for transaction entity
     // -----------------------------
 
-    // To list all of transactions (records) in the table 'transactions'
+    // To list all transactions (records) in the table 'transactions'
     @Override
     @Transactional(readOnly = true)
-    public List<Transaction2> findAll() {
-        return (List<Transaction2>) repository.findAll(); // cast because the method findAll returns a iterable.
+    public List<TransactionEntity> findAll() {
+        return (List<TransactionEntity>) repository.findAll(); // cast because the method findAll returns an iterable.
     }
 
     // To get a specific transaction based on its reference
     @Override
     @Transactional(readOnly = true)
-    public Optional<Transaction2> findByReference(String reference) {
+    public Optional<TransactionEntity> findByReference(String reference) {
         return Optional.ofNullable(repository.getTransactionByReference(reference));
     }
 
     // To cancel the transaction
     @Override
     @Transactional
-    public Optional<Transaction2> cancelTransaction(Long id, String reference, String status) {
+    public Optional<TransactionEntity> cancelTransaction(Long id, String reference, String status) {
 
         // Find a specific transaction
-        Optional<Transaction2> optionalTransaction = repository.findById(id);
+        Optional<TransactionEntity> optionalTransaction = repository.findById(id);
 
         // If the transaction is present then...
         if (optionalTransaction.isPresent()) {
             int rowsUpdated = repository.updateStatusByIdAndReference(id, status);
 
             if (rowsUpdated > 0) {
-                Optional<Transaction2> updated = repository.findById(id);
-                updated.ifPresent(entityManager::refresh); // ← Esto recarga desde la DB
+                Optional<TransactionEntity> updated = repository.findById(id);
+                updated.ifPresent(entityManager::refresh);
                 return updated;
             }
 
@@ -70,20 +70,8 @@ public class TransactionServiceImp implements TransactionService {
     // To save a new transaction in the db
     @Override
     @Transactional
-    public TransactionResponseDto save(Transaction2 transaction) {
-
-        transaction.setStatus("Aprobada");  
-        transaction.setReference(this.generateReference());  
-
-        Transaction2 newTransaction = repository.save(transaction);
-
-        TransactionResponseDto response = new TransactionResponseDto();
-        response.setId(newTransaction.getId());  
-        response.setStatus(newTransaction.getStatus());  
-        response.setReference(newTransaction.getReference());  
-        response.setOperation(newTransaction.getOperation());  
-
-        return response;
+    public TransactionEntity save(TransactionRequest transaction) {
+        return repository.save(TransactionEntity.createApproved(transaction, this.generateReference()));
     }
 
     private String generateReference() {
