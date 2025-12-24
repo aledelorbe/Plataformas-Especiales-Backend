@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.alejandro.msvc_processing_data.dto.TransactionResponseDto;
-import com.alejandro.msvc_processing_data.models.Transaction;
+import com.alejandro.msvc_processing_data.dto.TransactionRequestDto;
 
 public interface TransactionService {
     
@@ -20,5 +20,5 @@ public interface TransactionService {
 
     Optional<TransactionResponseDto> cancelTransaction(Long id, String reference, String status);
 
-    TransactionResponseDto save(Transaction transaction);
+    TransactionResponseDto save(TransactionRequestDto transactionRequestDto);
 }

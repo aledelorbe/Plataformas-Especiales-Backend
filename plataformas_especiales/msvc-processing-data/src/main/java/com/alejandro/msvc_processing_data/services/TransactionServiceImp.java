@@ -7,13 +7,15 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+import com.alejandro.msvc_processing_data.dto.TransactionRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alejandro.msvc_processing_data.clients.MsvcSaveDataClientRest;
 import com.alejandro.msvc_processing_data.dto.TransactionResponseDto;
-import com.alejandro.msvc_processing_data.models.Transaction;
+
+import feign.FeignException;
 
 
 @Service
@@ -26,7 +28,7 @@ public class TransactionServiceImp implements TransactionService {
     // Methods for transaction entity
     // -----------------------------
 
-    // To list all of clients (records) in the table 'clients'
+    // To list all clients (records) in the table 'clients'
     @Override
     @Transactional(readOnly = true)
     public List<TransactionResponseDto> findAll() {
@@ -37,28 +39,40 @@ public class TransactionServiceImp implements TransactionService {
     @Override
     @Transactional(readOnly = true)
     public Optional<TransactionResponseDto> findByReference(String reference) {
-        return Optional.ofNullable(client.transactionByReference(reference));
+        try {
+            return Optional.of(client.transactionByReference(reference));
+        } catch (FeignException.NotFound e) {
+            return Optional.empty();
+        } catch (FeignException e) {
+            throw new RuntimeException("Error communicating with save-data service", e);
+        }
     }
 
     // To cancel a certain transaction
     @Override
     @Transactional(readOnly = true)
     public Optional<TransactionResponseDto> cancelTransaction(Long id, String reference, String status) {
-        return Optional.ofNullable(client.cancelTransaction(id, reference, status));
+        try {
+            return Optional.of(client.cancelTransaction(id, reference, status));
+        } catch (FeignException.NotFound e) {
+            return Optional.empty();
+        } catch (FeignException e) {
+            throw new RuntimeException("Error communicating with save-data service", e);
+        }
     }
 
     // To save a new transaction in the db
     @Override
     @Transactional
-    public TransactionResponseDto save(Transaction transaction) {
+    public TransactionResponseDto save(TransactionRequestDto transactionRequestDto) {
 
         try {
-            transaction.setSecret(this.decrypt(transaction.getSecret()));
+            transactionRequestDto.setSecret(this.decrypt(transactionRequestDto.getSecret()));
         } catch (Exception e) {
-            throw new RuntimeException("Error when decript the secret", e);
+            throw new RuntimeException("Error when decrypt the secret", e);
         }
 
-        return client.saveTransaction(transaction);
+        return client.saveTransaction(transactionRequestDto);
     }
 
     private String decrypt(String encryptedBase64) throws Exception {
