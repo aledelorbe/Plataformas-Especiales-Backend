@@ -1,0 +1,38 @@
+
+services:
+  processing-data:
+    container_name: processing-data
+    ports:
+      - "${LOCAL_DK_SERVER_PORT_PD}:${LOCAL_DK_SERVER_PORT_PD}"
+    networks:
+      - special-platform-network
+    image: processing-data-image
+    build:
+      context: ./
+      dockerfile: ./msvc-processing-data/Dockerfile
+    depends_on:
+      saving-data:
+          condition: service_healthy
+
+  saving-data:
+    container_name: ${LOCAL_DK_CONTAINER_NAME_SD}
+    ports:
+      - "${LOCAL_DK_SERVER_PORT_SD}:${LOCAL_DK_SERVER_PORT_SD}"
+    networks:
+      - special-platform-network
+    image:  saving-data-image
+    build:
+      context: ./
+      dockerfile: ./msvc-save-data/Dockerfile
+    healthcheck:
+      disable: false
+      test: ["CMD-SHELL", "curl -f http://localhost:${LOCAL_DK_SERVER_PORT_SD}/actuator/health || exit 1"]
+      interval: 3s
+      timeout: 2s
+      retries: 4
+      start_period: 35s
+
+networks:
+  special-platform-network:
+    name: special-platform-network
+    driver: bridge
