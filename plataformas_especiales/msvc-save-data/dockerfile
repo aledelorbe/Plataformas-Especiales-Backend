@@ -1,0 +1,22 @@
+from eclipse-temurin:17-jdk as builder
+workdir /app/msvc-save-data
+
+copy ./pom.xml /app
+copy ./msvc-save-data/.mvn ./.mvn
+copy ./msvc-save-data/mvnw .
+run chmod +x ./mvnw
+copy ./msvc-save-data/pom.xml .
+
+run ./mvnw dependency:go-offline
+
+copy ./msvc-save-data/src ./src
+run ./mvnw clean package -DskipTests
+
+from amazoncorretto:17
+workdir /app
+copy --from=builder /app/msvc-save-data/target/msvc-save-data-0.0.1-SNAPSHOT.jar .
+
+expose 7001
+entrypoint ["java", "-jar", "msvc-save-data-0.0.1-SNAPSHOT.jar"]
+
+

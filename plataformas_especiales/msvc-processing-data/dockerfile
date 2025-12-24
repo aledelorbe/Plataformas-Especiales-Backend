@@ -1,0 +1,22 @@
+from eclipse-temurin:17-jdk as builder
+workdir /app/msvc-processing-data
+
+copy ./pom.xml /app
+copy ./msvc-processing-data/.mvn ./.mvn
+copy ./msvc-processing-data/mvnw .
+run chmod +x ./mvnw
+copy ./msvc-processing-data/pom.xml .
+
+run ./mvnw dependency:go-offline
+
+copy ./msvc-processing-data/src ./src
+run ./mvnw clean package -DskipTests
+
+from amazoncorretto:17
+workdir /app
+copy --from=builder /app/msvc-processing-data/target/msvc-processing-data-0.0.1-SNAPSHOT.jar .
+
+expose 7000
+entrypoint ["java", "-jar", "msvc-processing-data-0.0.1-SNAPSHOT.jar"]
+
+
