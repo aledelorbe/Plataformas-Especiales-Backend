@@ -74,6 +74,7 @@ Puedes ver una demo del proyecto en el siguiente enlace: [Plataformas Especiales
 # Futuras mejoras
 
 - Desarrollar las test en el microservicio processing data.
+- Implmentarle time limiter + retry + circuit breaker
 - Despliegue de la aplicacion en AWS.
 - Despligue automatico usando jenkins.
 
