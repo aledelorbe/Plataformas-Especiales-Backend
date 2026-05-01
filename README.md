@@ -13,6 +13,7 @@ El segundo microservicio almacena la transacción en una base de datos en memori
   - **OpenFeign**: Dependencia utilizada para la comunicación entre microservicios.
   - **Spring Actuator**: Proporciona endpoints para monitoreo y métricas de la aplicación.
 - **Maven**: Para la gestión de dependencias y construcción del proyecto.
+- **Swagger / OpenAPI**: Herramienta para documentar y probar los endpoints de la API de forma interactiva.
 - **H2**: Gestor de base de datos en memoria para almacenar la información de las transacciones.
 - **Postman**: Para simular peticiones HTTP y probar los endpoints.
 - **Docker**: permite ejecutar esta aplicación en un entorno aislado, sin necesidad de configurar manualmente dependencias o versiones.
@@ -95,6 +96,7 @@ The second microservice stores the transaction in an in-memory H2 database.
   - **OpenFeign**: Dependency used for communication between microservices.
   - **Spring Actuator**: Provides endpoints for application monitoring and metrics.
 - **Maven**: For dependency management and project build.
+- **Swagger / OpenAPI**: Tool used to document and interactively test the API endpoints.
 - **H2**: In-memory database manager to store transaction information.
 - **Postman**: Used to simulate HTTP requests and test endpoints.
 - **Docker**: Allows running the application in an isolated environment without manually configuring dependencies or versions.
