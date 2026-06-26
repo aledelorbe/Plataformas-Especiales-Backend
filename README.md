@@ -74,6 +74,7 @@ Puedes ver una demo del proyecto en el siguiente enlace: [Plataformas Especiales
 
 # Futuras mejoras
 
+- Rehacer los pom de los microservicios y del padre.
 - Desarrollar las test en el microservicio processing data.
 - Implmentarle time limiter + retry + circuit breaker
 - Despliegue de la aplicacion en AWS.
